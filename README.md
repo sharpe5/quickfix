@@ -145,6 +145,25 @@ Python bindings are also available via pip:
 pip install quickfix
 ```
 
+#### Installing this fork with pip
+
+The upstream PyPI package is built without OpenSSL, and upstream's TLS initiator verifies the
+certificate chain but never checks that the certificate was issued for the host it connected to.
+This fork adds that hostname check (`X509_VERIFY_PARAM_set1_host` in `SSLSocketInitiator` and
+`ThreadedSSLSocketInitiator`) and a `setup.py` that builds from this checkout with TLS on:
+
+```bash
+# Prerequisites: a C++ toolchain, Python.h and the OpenSSL headers.
+#   macOS   xcode-select --install && brew install openssl@3
+#   Debian  apt-get install -y build-essential python3-dev libssl-dev
+make -C wheel install      # pip install into the active python, then verify the name check
+make -C wheel verify       # only the check: mints throwaway certificates, connects on loopback
+make -C wheel wheel        # build a wheel into dist/ without installing
+```
+
+The installed version carries a local label (`1.16.0+ethena.1`) so `pip show quickfix` tells
+this build from the PyPI one. `pip install .` works too; the makefile adds the verification.
+
 ### Ruby
 
 ```bash

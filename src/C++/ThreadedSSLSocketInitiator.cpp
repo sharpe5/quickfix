@@ -332,6 +332,17 @@ void ThreadedSSLSocketInitiator::doConnect(const SessionID &s, const Dictionary 
     // Set SNI hostname for TLS connections
     ssl_set_sni_hostname(ssl, host.address, log);
 
+    // Verify that the certificate was issued for the host we dialled (RFC 6125). SNI alone only
+    // tells the server which certificate to present; this is what rejects a certificate for some
+    // other name. With SSL_VERIFY_PEER already set on the context, a mismatch fails SSL_connect
+    // before any FIX message -- Logon and its password included -- is sent.
+    X509_VERIFY_PARAM *verifyParam = SSL_get0_param(ssl);
+    if (is_ip_address(host.address)) {
+      X509_VERIFY_PARAM_set1_ip_asc(verifyParam, host.address.c_str());
+    } else {
+      X509_VERIFY_PARAM_set1_host(verifyParam, host.address.c_str(), 0);
+    }
+
     ThreadedSSLSocketConnection *pConnection
         = new ThreadedSSLSocketConnection(s, socket, ssl, host.address, host.port, getLog());
 

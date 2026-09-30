@@ -1,0 +1,4 @@
+# Lets `pip install .` build the Python extension from this checkout. See setup.py.
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
