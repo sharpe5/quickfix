@@ -3,6 +3,14 @@
 [![Build Status](https://github.com/quickfix/quickfix/actions/workflows/build_test_cmake.yml/badge.svg)](https://github.com/quickfix/quickfix/actions)
 [![License](https://img.shields.io/badge/license-QuickFIX-blue.svg)](LICENSE)
 
+> **This fork** is [quickfix/quickfix](https://github.com/quickfix/quickfix) unchanged, plus one
+> addition: the SSL initiators verify that the server's certificate was issued for the hostname
+> (or IP address) in `SocketConnectHost`, RFC 6125 style, and refuse the connection before any
+> FIX message is sent when it was not. Upstream only checks that the certificate chains to a
+> trusted CA, so a valid certificate for any other name is accepted. The check is on whenever
+> `CertificationAuthoritiesFile` is set. It is pip-installable from this checkout; see
+> [Installing this fork with pip](#installing-this-fork-with-pip).
+
 QuickFIX is a free, open-source implementation of the [FIX protocol](http://www.fixprotocol.org/) (Financial Information eXchange). It is a full-featured messaging engine that supports FIX versions 4.0 through 5.0 SP2, including FIXT 1.1.
 
 ## Features
