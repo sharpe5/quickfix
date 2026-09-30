@@ -332,8 +332,10 @@ void SSLSocketInitiator::doConnect(const SessionID &sessionID, const Dictionary 
 
     // Verify that the certificate was issued for the host we dialled (RFC 6125). SNI alone only
     // tells the server which certificate to present; this is what rejects a certificate for some
-    // other name. With SSL_VERIFY_PEER already set on the context, a mismatch fails SSL_connect
-    // before any FIX message -- Logon and its password included -- is sent.
+    // other name. It is enforced only when the context has SSL_VERIFY_PEER, which loadCAInfo sets
+    // when CertificationAuthoritiesFile or CertificationAuthoritiesDirectory is configured;
+    // without a CA neither the chain nor the name is checked. When it is, a mismatch fails
+    // SSL_connect before any FIX message -- Logon and its password included -- is sent.
     X509_VERIFY_PARAM *verifyParam = SSL_get0_param(ssl);
     if (is_ip_address(host.address)) {
       X509_VERIFY_PARAM_set1_ip_asc(verifyParam, host.address.c_str());
